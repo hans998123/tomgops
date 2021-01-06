@@ -25,6 +25,7 @@ class UsersInfoHelper():
                 return dict_id
             else:
                 return None
+        mysql_helper.close()
 
     def get_net_user_info(self):
         list_mail_user = self.mail_user.split('@')
@@ -38,6 +39,7 @@ class UsersInfoHelper():
                 return dict_users_info
             else:
                 return None
+        mysql_helper.close()
 
     def update_baseid_nfsid(self,**new_da_id):
         list_mail_user = self.mail_user.split('@')
@@ -47,3 +49,4 @@ class UsersInfoHelper():
         setsql = ','.join(['%s=%r' % (k, new_da_id[k]) for k in new_da_id])
         sql = "update usersinfo set %s where userid='%s' and domainid=(select domain_id from domain where domain_name='%s')" % (setsql, user_id, domain_name)
         mysql_helper.update(sql)
+        mysql_helper.close()

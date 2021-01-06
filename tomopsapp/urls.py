@@ -16,4 +16,5 @@ urlpatterns = [
    path('index/recalc_user_quota_info/', views.recalc_user_quota_info),
    path('index/change_user_quota_info/', views.change_user_quota_info),
    path('index/select_domain_blacklist_info/', views.select_domain_blacklist_info),
+   path('index/select_ip_blacklist_info/',views.select_ip_blacklist_info),
 ]

@@ -14,16 +14,17 @@ class MailboxHelper():
         self.db_password = db_password
 
     def get_da_path(self):
-       mysql_helper = MysqlHelper(self.da_ip,self.port,self.db_name,self.db_user,self.db_password)
-       sql = "select home from mailbox where username = '%s'" %(self.mail_user)
-       json_da_path = mysql_helper.get_all(sql)
-       for dict_da_path in json_da_path:
+        mysql_helper = MysqlHelper(self.da_ip,self.port,self.db_name,self.db_user,self.db_password)
+        sql = "select home from mailbox where username = '%s'" %(self.mail_user)
+        json_da_path = mysql_helper.get_all(sql)
+        for dict_da_path in json_da_path:
             if dict_da_path is not None:
                 dict_da_path= dict_da_path['home']
                 str_da_ip = "".join(dict_da_path)
                 return str_da_ip
             else:
                 return None
+        mysql_helper.close()
 
     def get_mailbox_info(self):
         mysql_helper = MysqlHelper(self.da_ip, self.port, self.db_name, self.db_user, self.db_password)
@@ -34,6 +35,7 @@ class MailboxHelper():
                 return dict_mailbox_info
             else:
                 return None
+        mysql_helper.close()
 
     def insert_mailbox_info(self,new_da_ip,**dict_mailbox_info):
         mysql_helper = MysqlHelper(new_da_ip, self.port, self.db_name, self.db_user, self.db_password)

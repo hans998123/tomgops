@@ -11,6 +11,7 @@ from work.UsersLoginInfo import UsersLoginHelper
 from work.MailboxInfo import MailboxHelper
 from work.OperationDovecotInfo import OperationDovecotHelper
 from work.BlackListInfo import BlackListHelper
+from work.IPBlackListInfo import IPBlackListHelper
 
 id_file = 'config/da_ip.yaml'
 config = configparser.ConfigParser()
@@ -295,5 +296,16 @@ def select_domain_blacklist_info(request):
         if dict_data is not None:
             return HttpResponse(json.dumps(dict_data), content_type="application/json")
         else:
-            dict_info = {'Message': 'domain black list'}
+            dict_info = {'Message': 'Not found domain black list'}
+            return HttpResponse(json.dumps(dict_info), content_type="application/json")
+
+def select_ip_blacklist_info(request):
+    if request.method == 'POST':
+        rec_ip = request.POST.get('select_ip_blacklist')
+        iblh = IPBlackListHelper(rec_ip,newcoremail_ip,newcoremail_port,newcoremail_dbname,newcoremail_db_user,newcoremail_db_password)
+        dict_data = iblh.get_ip_status()
+        if dict_data is not None:
+            return HttpResponse(json.dumps(dict_data), content_type="application/json")
+        else:
+            dict_info = {'Message': 'Not found ip black list'}
             return HttpResponse(json.dumps(dict_info), content_type="application/json")
