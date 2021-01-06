@@ -12,6 +12,7 @@ from work.MailboxInfo import MailboxHelper
 from work.OperationDovecotInfo import OperationDovecotHelper
 from work.BlackListInfo import BlackListHelper
 from work.IPBlackListInfo import IPBlackListHelper
+from work.UserSentNumberInfo import UserSentNumberHelper
 
 id_file = 'config/da_ip.yaml'
 config = configparser.ConfigParser()
@@ -45,6 +46,11 @@ rsport = config.get('new-redis','redis_port')
 redis_port = int(rsport)
 redis_ip = config.get('new-redis','redis_ip')
 redis_key = config.get('new-redis','redis_key')
+
+#mail-redis
+mail_sport = config.get('mail-redis','redis_port')
+mail_redis_port = int(mail_sport)
+mail_redis_ip = config.get('mail-redis','redis_ip')
 
 #admin
 admin_ip = config.get('admin-database','ip')
@@ -288,7 +294,7 @@ def change_user_quota_info(request):
             dict_info = {'Message': 'not found da user'}
             return HttpResponse(json.dumps(dict_info), content_type="application/json")
 
-def select_domain_blacklist_info(request):
+def get_domain_blacklist_info(request):
     if request.method == "POST":
         rec_domain = request.POST.get('select_domain_blacklist')
         blh = BlackListHelper(rec_domain,newcoremail_ip,newcoremail_port,newcoremail_dbname,newcoremail_db_user,newcoremail_db_password)
@@ -299,7 +305,7 @@ def select_domain_blacklist_info(request):
             dict_info = {'Message': 'Not found domain black list'}
             return HttpResponse(json.dumps(dict_info), content_type="application/json")
 
-def select_ip_blacklist_info(request):
+def get_ip_blacklist_info(request):
     if request.method == 'POST':
         rec_ip = request.POST.get('select_ip_blacklist')
         iblh = IPBlackListHelper(rec_ip,newcoremail_ip,newcoremail_port,newcoremail_dbname,newcoremail_db_user,newcoremail_db_password)
@@ -308,4 +314,22 @@ def select_ip_blacklist_info(request):
             return HttpResponse(json.dumps(dict_data), content_type="application/json")
         else:
             dict_info = {'Message': 'Not found ip black list'}
+            return HttpResponse(json.dumps(dict_info), content_type="application/json")
+
+def get_mailuser_send_number_info(request):
+    if request.method == 'POST':
+        mail_user = request.POST.get('get_mailuser_send_number')
+        userinfo = UsersInfoHelper(mail_user, ip, port, dbname, db_user, db_password)
+        dict_usersinfo = userinfo.get_net_user_info()
+        if dict_usersinfo is not None:
+            user_sent_number = UserSentNumberHelper(mail_redis_ip,mail_redis_port,dict_usersinfo['userid'],dict_usersinfo['domainid'])
+            mail_user_sent_number = user_sent_number.get_mailuser_send_number()
+            if mail_user_sent_number is not None:
+                dict_info = {'mail_user':mail_user,'mail_user_sent_number':mail_user_sent_number}
+                return HttpResponse(json.dumps(dict_info), content_type="application/json")
+            else:
+                dict_info = {'mail_user':mail_user,mail_user_sent_number:'not sent mail'}
+                return HttpResponse(json.dumps(dict_info), content_type="application/json")
+        else:
+            dict_info = {'Message': 'not found user'}
             return HttpResponse(json.dumps(dict_info), content_type="application/json")
