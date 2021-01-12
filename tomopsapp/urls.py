@@ -18,4 +18,5 @@ urlpatterns = [
    path('index/get_domain_blacklist_info/', views.get_domain_blacklist_info),
    path('index/get_ip_blacklist_info/',views.get_ip_blacklist_info),
    path('index/get_mailuser_send_number_info/',views.get_mailuser_send_number_info),
+   path('index/add_barracuda_whitelist_info/',views.add_barracuda_whitelist_info),
 ]

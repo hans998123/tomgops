@@ -58,5 +58,11 @@
     账号:<input type="text" name="get_mailuser_send_number"><br>
         <input type="submit" value="提交"><br>
 </form>
+<h2>梭子鱼加白名单</h2>
+<form action="add_barracuda_whitelist_info/" method="post">
+     {% csrf_token %}
+    账号:<input type="text" name="add_barracuda_whitelist"><br>
+        <input type="submit" value="提交"><br>
+</form>
 </body>
 </html>

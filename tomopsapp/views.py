@@ -333,3 +333,8 @@ def get_mailuser_send_number_info(request):
         else:
             dict_info = {'Message': 'not found user'}
             return HttpResponse(json.dumps(dict_info), content_type="application/json")
+
+def add_barracuda_whitelist_info(request):
+    if request.method == 'POST':
+        sender = request.POST.get('add_barracuda_whitelist')
+    return render(request,'index.html')
