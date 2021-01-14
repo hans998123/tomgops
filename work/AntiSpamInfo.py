@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 #coding=utf-8
 
-import paramiko
 from common.ParamikoHelper import ParamikoHelper
 
 class AntiSpamHelper():
