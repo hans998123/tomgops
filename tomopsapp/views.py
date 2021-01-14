@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-import configparser,re,yaml,json
+import configparser,re,yaml,json,paramiko
 from common.OperationPasswordHelper import EncryptionHelper
 from common.OperationTimeHelper import OperationTimeHelper
 from common.SmtpLibHelper import SendMailHelper
@@ -13,6 +13,7 @@ from work.OperationDovecotInfo import OperationDovecotHelper
 from work.BlackListInfo import BlackListHelper
 from work.IPBlackListInfo import IPBlackListHelper
 from work.UserSentNumberInfo import UserSentNumberHelper
+from work.AntiSpamInfo import AntiSpamHelper
 
 id_file = 'config/da_ip.yaml'
 config = configparser.ConfigParser()
@@ -65,6 +66,13 @@ sender = config.get('smtp','login_username')
 smtp_host = config.get('smtp','host')
 smtp_port = config.get('smtp','port')
 int_smtp_port = int(smtp_port)
+
+#yxsx
+yxsx_ip = config.get('yxsx','server_ip')
+yxsx_user = config.get('yxsx','server_user')
+yxsx_port = config.get('yxsx','server_port')
+
+private_key = paramiko.RSAKey.from_private_key_file('/root/.ssh/id_rsa')
 
 def get_dict(id_file):
     with open(id_file,'r') as file_object:
@@ -336,5 +344,10 @@ def get_mailuser_send_number_info(request):
 
 def add_barracuda_whitelist_info(request):
     if request.method == 'POST':
-        sender = request.POST.get('add_barracuda_whitelist')
+        sender_ip = request.POST.get('add_barracuda_whitelist')
+        AntiSpamHelper.add_postscreen_access(sender_ip,'permit')
+        list_ip = yxsx_ip.split(',')
+        for ip in list_ip:
+            ant = AntiSpamHelper(ip,yxsx_user,yxsx_port, private_key)
+            ant.add_barracuda_whitelist('/root/paramiko_files/postscreen_access.cidr','/etc/postfix/')
     return render(request,'index.html')
